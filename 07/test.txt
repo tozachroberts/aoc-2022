@@ -1,0 +1,17 @@
+$ cd /
+$ ls
+dir foo3
+$ cd foo3
+$ ls
+100001 foo3
+100001 bar3
+dir foo2
+$ cd foo2
+$ ls
+10000 foo2
+10000 bar2
+dir foo1
+$ cd foo1
+$ ls
+1000 foo1
+1000 bar1

@@ -1,0 +1,34 @@
+#!/usr/bin/env perl
+
+my $scores = { a => { x => 1 + 3, 
+                      y => 2 + 6,
+                      z => 3 + 0 },
+               b => { x => 1 + 0, 
+                      y => 2 + 3,
+                      z => 3 + 6 },
+               c => { x => 1 + 6, 
+                      y => 2 + 0,
+                      z => 3 + 3 } };
+                      
+my $scores2 = { a => { x => 3 + 0,   # lose 
+                       y => 1 + 3,   # draw
+                       z => 2 + 6 }, # win
+                b => { x => 1 + 0,   # lose
+                       y => 2 + 3,   # draw
+                       z => 3 + 6 }, # win
+                c => { x => 2 + 0,   # lose
+                       y => 3 + 3,   # draw
+                       z => 1 + 6 }};# win
+
+open(my $input, "<", "input.txt");
+my $score = 0;
+my $score2 = 0;
+while (my $line = <$input>) {
+    chomp($line);
+    my ($op,$me) = split(/ /, lc($line));
+    print "score[$score] + $scores->{$op}{$me} --- scrore2[$score2] + $scores2->{$op}{$me}\n";
+    $score += $scores->{$op}{$me};
+    $score2 += $scores2->{$op}{$me};
+}
+print "score1[$score]\n";
+print "score2[$score2]\n";

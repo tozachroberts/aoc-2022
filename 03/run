@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+
+def priority(item):
+    score = ord(item)
+    if (score > 96):
+        score = score - 96
+    else:
+        score = score - 64 + 26
+    return score
+        
+def main():
+    f = open("input.txt","r")
+    score = 0
+    groups = []
+    group = []
+    i = 0
+    for line in f.readlines():
+        pack = line.strip()
+        half = int(len(pack)/2)
+        side1 = set(list(pack[:half]))
+        side2 = set(list(pack[half:]))
+        all = set(list(pack))
+        common = side1 & side2
+        common_score = priority(common.copy().pop())
+        print(f"score[{score}] common[{common}] common_score[{common_score}] side1[{side1}] side2[{side2}]")
+        score = score + common_score
+        group.append(all)
+        if (i % 3 == 2):
+            ### store group
+            groups.append(group)
+            ### reset for new group
+            group = [] 
+        i += 1
+    print(f"score[{score}]")
+
+    score2 = 0
+    for group in groups:
+        common = group[0] & group[1] & group[2]
+        common_score = priority(common.copy().pop())
+        print(f"score2[{score2}] common[{common}] common_score[{common_score}]")
+        score2 += common_score
+    print(f"score2[{score2}]")
+
+if __name__ == "__main__":
+    main()
