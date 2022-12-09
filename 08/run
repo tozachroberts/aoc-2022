@@ -3,22 +3,52 @@
 import pprint
 
 def is_visible(tree, grid, row, col):
-    return _left(tree, grid, row, col)
+    return _horizontal(tree, grid, row, col) or _vertical(tree, grid, row, col)
     
-def _left(tree, grid, row, col):
-    v = True
-    other_col = col - 1
-    while other_col > 0:
-        other = grid[row][other_col]
-        if tree <= other:
-            v = False
-            print(f"[{row},{col}-{tree} hidden by {row},{other_col}-{other}")
-            break
-        other_col -= 1
+def _horizontal(tree, grid, row, col):
+    v = False
+    left = set(grid[row][:col])
+    right = set(grid[row][col+1:])
+    if tree > max(left) or tree > max(right):
+        #print(f"[{row},{col}-{tree} horizontally visible")
+        v = True
     return v
-
+    
+def _vertical(tree, grid, row, col):
+    v = False
+    up = { grid[r][col] for r in range(0,row) }
+    down = { grid[r][col] for r in range(row+1,len(grid)) }
+    if tree > max(up) or tree > max(down):
+        #print(f"[{row},{col}-{tree} vertically visible")
+        v = True
+    return v
+    
+def _view(direction, tree, grid, row, col):
+    others = []
+    if direction == "↑":
+        others = [grid[r][col] for r in range(row-1,-1,-1)]
+    elif direction == "↓":
+        others = [grid[r][col] for r in range(row+1,len(grid))]
+    elif direction == "←":
+        others = grid[row][:col]
+        others.reverse()
+    elif direction == "→":
+        others = grid[row][col+1:]
+    view = 0
+    for other in others:
+        view += 1
+        if tree <= other:
+            break
+    return view
+    
+def printgrid(grid):
+    for row in grid:
+        print(''.join([str(x) for x in row]))
+    
 def main():
-    f = open("test.txt","r")
+    f = open("input.txt","r")
+    #f = open("test.txt","r")
+    #f = open("test2.txt","r")
     
     grid = []
     for line in f.readlines():
@@ -28,22 +58,33 @@ def main():
         for height in line_tokens:
             row.append(height)
         grid.append(row)
-    pprint.pprint(grid, compact=True)
+    #pprint.pprint(grid, compact=True)
+    printgrid(grid)
     
     visible = 0
     visible += 2*(len(grid) + len(grid[0]) - 2)
     print(f"perimeter[{visible}]")
     
+    v = ''
+    bestview = 0
     row = 1
-    col = 1
-    while row < len(grid):
-        while col < len(grid[0]):
+    while row < len(grid)-1:
+        col = 1
+        while col < len(grid[0])-1:
             tree = grid[row][col]
             if is_visible(tree, grid, row, col):
-                print(f"[{row},{col}-{tree} visible")
                 visible += 1
+            view = _view("↑",tree,grid,row,col) \
+                 * _view("↓",tree,grid,row,col) \
+                 * _view("←",tree,grid,row,col) \
+                 * _view("→",tree,grid,row,col)
+            if view > bestview:
+                bestview = view
+            print(f"[{row},{col}] {tree} visible[{visible}] view[{view}] bestview[{bestview}]")
             col += 1
         row += 1
+    print(f"visible[{visible}] bestview[{bestview}]")
+    
 
 if __name__ == "__main__":
     main()
