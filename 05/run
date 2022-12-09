@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+
+def rangeset(rangestring):
+    (begin,end) = rangestring.split('-')
+    return set(range(int(begin),int(end)+1))
+    
+def is_either_subset(a,b):
+    retval = 0
+    if a <= b or a >= b:
+        retval = 1
+    return retval
+    
+def is_overlap(a,b):
+    retval = 0
+    if len(a & b):
+        retval = 1
+    return retval
+
+def stack_item(s, line):
+    item = None
+    i = 1+(4*(s-1))
+    foo = list(line)[i]
+    if foo and not foo.isspace(): item=foo
+    return item
+    
+def main():
+    f = open("input.txt","r")
+    stacks = {}
+    for s in range(1,10): stacks[s] = []
+    lines = f.readlines()
+    for line in lines:
+        if '[' in line:
+            line = line.rstrip('\n')
+            for s in range(1,10):
+                item = stack_item(s, line)
+                if item:
+                    stacks[s].insert(0,item)
+    print(f"orig stacks[{stacks}]")
+    for line in lines:
+        if line.startswith("move"):
+            line = line.rstrip('\n')
+            print(f"line[{line}]")
+            parts = line.split(' ')
+            action = parts[0]
+            count = int(parts[1])
+            src = int(parts[3])
+            dest = int(parts[5])
+            items = []
+            for i in range(count):
+                #item = stacks[src].pop()
+                #stacks[dest].append(item)
+                items.append(stacks[src].pop())
+            items.reverse()
+            stacks[dest].extend(items)
+    print(f" new stacks[{stacks}]")
+    tops = ""
+    for x in range(1,10): tops = tops + stacks[x][-1]
+    print(f"tops[{tops}]")
+
+if __name__ == "__main__":
+    main()

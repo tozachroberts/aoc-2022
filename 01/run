@@ -1,0 +1,23 @@
+#!/usr/bin/env perl
+
+open(my $input, "<", "input.txt");
+my $elves = {};
+my $elf = 0;
+while (my $line = <$input>) {
+    if ($line =~ m/\d+/) {
+        $value = $line;
+        chomp($value);
+        $elves->{$elf} += $value;
+    }
+    else {
+        $elf++;
+    }
+}
+my $sorted_elves = [sort {$elves->{$b} <=> $elves->{$a}} keys(%$elves)];
+#for my $elf (@$sorted_elves) { printf("%03d: %d\n", $elf, $elves->{$elf}) }
+print "\n";
+print "1: elf " . $sorted_elves->[0] . " with " . $elves->{$sorted_elves->[0]} . "\n";
+my $top3 = [@$sorted_elves[0..2]];
+my $top3_sum = 0;
+for my $elf (@$top3) { $top3_sum += $elves->{$elf}; }
+print "2: elves [" . join(',',@$top3) . "] with " . $top3_sum . "\n";

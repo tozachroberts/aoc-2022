@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+
+import pprint
+
+def find_dirs_sub_100k(node):
+    size = 0
+    nodes = [node]
+    while nodes:
+        for current in nodes.pop().values():
+            if current["type"] == "d":
+                nodes.append(current["children"])
+                if current["size"] < 100000:
+                    #print(f"current[{current}] size[{current['size']}]")
+                    size += current["size"]
+    return size
+    
+def find_delete_dir(node):
+    for root, root_node in node.items():
+        delete = root_node
+    size_needed = 30000000 - (70000000 - delete["size"])
+    print(f"root_size[{delete['size']}] size_needed[{size_needed}]")
+    nodes = [node]
+    while nodes:
+        for current in nodes.pop().values():
+            if current["type"] == "d":
+                nodes.append(current["children"])
+                if current["size"] > size_needed and (current["size"] - size_needed < delete["size"] - size_needed):
+                    delete = current
+    return delete
+    
+def main():
+    f = open("input.txt","r")
+    #f = open("test.txt","r")
+    #f = open("test2.txt","r")
+    
+    tree = { "/": { "type": "d", "parent": None, "size": 0, "children": {} } }
+    pwd = None
+    cwd = None
+    over_100k = 0
+    for line in f.readlines():
+        line = line.rstrip('\n')
+        line_tokens = line.split()
+        if line_tokens[0] == '$':
+            # $ command args
+            cmd = line_tokens[1]
+            if cmd == "cd":
+                # navigate
+                dirname = line_tokens[2]
+                if dirname == "/":
+                    cwd = tree["/"]
+                elif dirname == "..":
+                    cwd = pwd
+                    pwd = pwd['parent']
+                else:
+                    cwd = cwd['children'][dirname]
+                    pwd = cwd['parent']
+            #elsif cmd == "ls":
+        elif line_tokens[0] == "dir":
+            # dir dirname
+            dirname = line_tokens[1]
+            if dirname not in cwd.keys():
+                cwd["children"][dirname] = { "type": "d",
+                                             "parent": cwd,
+                                             "size": 0,
+                                             "children": {} }
+        else:
+            # size filename
+            size = int(line_tokens[0])
+            filename = line_tokens[1]
+            cwd["children"][filename] = { "type": "f", "size": size }
+            tmp = cwd
+            while tmp["parent"]:
+                tmp["size"] += size
+                tmp = tmp["parent"]
+            # set top level size
+            tmp["size"] += size
+    #print(f"cwd[{cwd}]")
+    pprint.pprint(tree)
+    #cwd = tree["/"]
+    #size = 0
+    #sub100k_size = 0
+    size = find_dirs_sub_100k(tree)
+    print(f"size[{size}]")
+    delete = find_delete_dir(tree)
+    print(f"delete[{delete['size']}]")
+
+if __name__ == "__main__":
+    main()
