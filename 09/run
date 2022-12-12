@@ -8,16 +8,22 @@ class Position:
     def __init__(self, x=0, y=0):
         self.x = x
         self.y = y
+        self.visited = { self.pos() }
     
     def pos(self):
         return (self.x,self.y)
         
-class H(Position):
-    def __init__(self, x=0, y=0):
+class Rope(Position):
+    def __init__(self, x=0, y=0, knots=1):
         super().__init__(x, y)
-        self.t = T(x=self.x, y=self.y)
+        self.knots = []
+        prior = self
+        for i in range(0,knots):
+            knot = Knot(id=i+1, x=self.x, y=self.y, prior=prior)
+            self.knots.append(knot)
+            prior = knot
 
-    def travel(self,dir,mag):
+    def move(self,dir,mag):
         if dir == "U":
             self.y += mag
         elif dir == "D":
@@ -26,49 +32,85 @@ class H(Position):
             self.x += mag
         elif dir == "L":
             self.x -= mag
-        self.t.follow(self)        
+        self.visited.add(self.pos())
+        for knot in self.knots:
+            knot.follow()
         return self.pos()
 
-class T(Position):
-    def __init__(self, x=0, y=0):
+class Knot(Position):
+    def __init__(self, id=None, x=0, y=0, prior=None):
         super().__init__(x,y)
-        self.visited = { self.pos() }
+        self.id = id
+        self.prior = prior
     
-    def follow(self,h):
-        dx = h.x - self.x
-        dy = h.y - self.y
+    def __repr__(self):
+        return f"knot{self.id}"
+    
+    def follow(self):
+        dx = self.prior.x - self.x
+        dy = self.prior.y - self.y
         ### move up or down
-        if self.x == h.x and self.y != h.y and abs(dy) >= 2:
+        if self.x == self.prior.x and self.y != self.prior.y and abs(dy) >= 2:
             self.y += int(math.copysign(1,dy))
         ### move left or right
-        elif self.x != h.x and self.y == h.y and abs(dx) >= 2:
+        elif self.x != self.prior.x and self.y == self.prior.y and abs(dx) >= 2:
             self.x += int(math.copysign(1,dx))
         ### move diagonal if not in alignment and > 2 difference
-        if self.x != h.x and self.y != h.y and (abs(dx) >=2 or abs(dy) >= 2):
+        if self.x != self.prior.x and self.y != self.prior.y and (abs(dx) >=2 or abs(dy) >= 2):
             self.x += int(math.copysign(1,dx))
             self.y += int(math.copysign(1,dy))
         self.visited.add(self.pos())
            
-def printgrid(points):
-    print(''.join([str(x) for x in points]))
+def print_rope(rope):
+    out = []
+    xscale = 10
+    yscale = 10
+    for (x,y) in rope.visited:
+        if abs(x) > xscale:
+            xscale = abs(x)
+        if abs(y) > yscale:
+            yscale = abs(y)
+    for y in range(0,yscale*2+1):
+        out.append([])
+        for x in range(0,xscale*2+1):
+            out[y].append('.')
+    out[yscale][xscale] = 's'
+    for knot in reversed(rope.knots):
+        out[knot.y+yscale][knot.x+xscale] = str(knot.id)
+    out[rope.y+yscale][rope.x+xscale] = 'H'
+    for y in reversed(out):
+        print(''.join(y))
+    print()
     
 def main():
     filename = "input.txt"
+    knots = 9
     if (len(sys.argv) > 1 and sys.argv[1] == "test"):
         filename = "test.txt"
+        knots = 1
+    if (len(sys.argv) > 1 and sys.argv[1] == "test2"):
+        filename = "test2.txt"
+        
     f = open(filename,"r")
     
-    h = H()
-    #print(f"h[{h.pos()}] t[{h.t.pos()}] v[{h.t.visited}]")
+    rope = Rope(knots=knots)
+    #print(f"rope[{rope.pos()}] knot[{rope.knot.pos()}] v[{rope.knot.visited}]")
+    print_rope(rope)
+    linecount = 1
     for line in f.readlines():
         line = line.rstrip('\n')
         (dir,mag) = line.split(' ')
         mag = int(mag)
         for i in range(0,mag):
-            h.travel(dir,1)
-        #print(f"h[{h.pos()}] t[{h.t.pos()}] v[{h.t.visited}]")
-    print(f"visited[{h.t.visited}]")
-    print(f"visited[{len(h.t.visited)}]")
+            rope.move(dir,1)
+        #print(f"rope[{rope.pos()}] knot[{rope.knot.pos()}] v[{rope.knot.visited}]")
+        print(f"line[{linecount}] dir[{dir}] mag[{mag}]")
+        print_rope(rope)
+        linecount += 1
+        #import pdb
+        #pdb.set_trace()
+    print(f"visited[{rope.knots[-1].visited}]")
+    print(f"visited[{len(rope.knots[-1].visited)}]")
     
 
 if __name__ == "__main__":
