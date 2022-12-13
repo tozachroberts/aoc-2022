@@ -1,0 +1,334 @@
+noop
+noop
+addx 15
+noop
+noop
+addx -11
+noop
+noop
+addx 6
+noop
+noop
+addx -3
+noop
+noop
+addx 5
+noop
+noop
+addx -1
+noop
+noop
+addx -8
+noop
+noop
+addx 13
+noop
+noop
+addx 4
+noop
+noop
+noop
+addx -1
+noop
+noop
+addx 5
+noop
+noop
+addx -1
+noop
+noop
+addx 5
+noop
+noop
+addx -1
+noop
+noop
+addx 5
+noop
+noop
+addx -1
+noop
+noop
+addx 5
+noop
+noop
+addx -1
+noop
+noop
+addx -35
+noop
+noop
+addx 1
+noop
+noop
+addx 24
+noop
+noop
+addx -19
+noop
+noop
+addx 1
+noop
+noop
+addx 16
+noop
+noop
+addx -11
+noop
+noop
+noop
+noop
+addx 21
+noop
+noop
+addx -15
+noop
+noop
+noop
+noop
+addx -3
+noop
+noop
+addx 9
+noop
+noop
+addx 1
+noop
+noop
+addx -3
+noop
+noop
+addx 8
+noop
+noop
+addx 1
+noop
+noop
+addx 5
+noop
+noop
+noop
+noop
+noop
+noop
+noop
+addx -36
+noop
+noop
+noop
+addx 1
+noop
+noop
+addx 7
+noop
+noop
+noop
+noop
+noop
+addx 2
+noop
+noop
+addx 6
+noop
+noop
+noop
+noop
+noop
+noop
+noop
+addx 1
+noop
+noop
+noop
+noop
+addx 7
+noop
+noop
+addx 1
+noop
+noop
+noop
+addx -13
+noop
+noop
+addx 13
+noop
+noop
+addx 7
+noop
+noop
+noop
+addx 1
+noop
+noop
+addx -33
+noop
+noop
+noop
+noop
+noop
+addx 2
+noop
+noop
+noop
+noop
+noop
+addx 8
+noop
+noop
+noop
+addx -1
+noop
+noop
+addx 2
+noop
+noop
+addx 1
+noop
+noop
+noop
+addx 17
+noop
+noop
+addx -9
+noop
+noop
+addx 1
+noop
+noop
+addx 1
+noop
+noop
+addx -3
+noop
+noop
+addx 11
+noop
+noop
+noop
+noop
+addx 1
+noop
+noop
+noop
+addx 1
+noop
+noop
+noop
+noop
+addx -13
+noop
+noop
+addx -19
+noop
+noop
+addx 1
+noop
+noop
+addx 3
+noop
+noop
+addx 26
+noop
+noop
+addx -30
+noop
+noop
+addx 12
+noop
+noop
+addx -1
+noop
+noop
+addx 3
+noop
+noop
+addx 1
+noop
+noop
+noop
+noop
+noop
+addx -9
+noop
+noop
+addx 18
+noop
+noop
+addx 1
+noop
+noop
+addx 2
+noop
+noop
+noop
+noop
+addx 9
+noop
+noop
+noop
+noop
+noop
+addx -1
+noop
+noop
+addx 2
+noop
+noop
+addx -37
+noop
+noop
+addx 1
+noop
+noop
+addx 3
+noop
+noop
+noop
+addx 15
+noop
+noop
+addx -21
+noop
+noop
+addx 22
+noop
+noop
+addx -6
+noop
+noop
+addx 1
+noop
+noop
+noop
+addx 2
+noop
+noop
+addx 1
+noop
+noop
+noop
+addx -10
+noop
+noop
+noop
+noop
+addx 20
+noop
+noop
+addx 1
+noop
+noop
+addx 2
+noop
+noop
+addx 2
+noop
+noop
+addx -6
+noop
+noop
+addx -11
+noop
+noop
+noop
