@@ -16,7 +16,8 @@ class Monkey:
         self.inspected = 0
 
     def __repr__(self):
-        return f"Monkey{str(self.id)} inspected[{self.inspected}] items[{','.join([str(x) for x in self.items])}]"
+        #return f"Monkey{str(self.id)} inspected[{self.inspected}] items[{','.join([str(x) for x in self.items])}]"
+        return f"Monkey{str(self.id)} inspected[{self.inspected}]"
         
     def play(self, monkeys):
         self.items.reverse()
@@ -26,32 +27,50 @@ class Monkey:
             new_item = self.op(item)
             self.inspected += 1
             ### reduce worry: / 3 round down
-            new_item = math.floor(new_item / 3)
+            ### disabled for part 2
+            #new_item = math.floor(new_item / 3)
             ### update item value
             #self.items[self.items.index(item)] = new_item
+            ### Reduce new_item by the LCD of all the tests
+            if new_item > 9699690:
+            #if new_item > 96577:
+                (whole,remainder) = divmod(new_item,9699690)
+                #(whole,remainder) = divmod(new_item,96577)
+                #print(f"reduce {new_item} to {remainder}")
+                new_item = remainder
             ### test: perform test
+            #if new_item % self.test == 0:
             if self.test(new_item):
                 ### toss: test result sends item to other monkey
+                #print(f"T toss {new_item} to Monkey{monkeys[self.next_true].id}")
                 monkeys[self.next_true].items.append(new_item)
-                #print(monkeys[self.next_true])
             else:
                 ### toss: test result sends item to other monkey
+                #print(f"F toss {new_item} to Monkey{monkeys[self.next_false].id}")
                 monkeys[self.next_false].items.append(new_item)
                 #print(monkeys[self.next_false])
 
 def main():
-    filename = "input.txt"
-    if (len(sys.argv) > 1 and sys.argv[1] == "test"):
-        filename = "test.txt"
-    if (len(sys.argv) > 1 and sys.argv[1] == "test2"):
-        filename = "test2.txt"
-    f = open(filename,"r")
-    
-    #for line in f.readlines():
-    #    line = line.rstrip('\n')
-    #print(f"input[{input}]")
+    rounds = 10000
+    if (len(sys.argv) > 1 and int(sys.argv[1])):
+        rounds = int(sys.argv[1])
     
     monkeys = [ \
+              ### original Monkeys
+              #Monkey(id=0, items=[54,61,97,63,74], op=lambda x: x*7, test=lambda x: x%17==0, next_true=5, next_false=3), \
+              #Monkey(id=1, items=[61,70,97,64,99,83,52,87], op=lambda x: x+8, test=lambda x: x%2==0, next_true=7, next_false=6), \
+              #Monkey(id=2, items=[60,67,80,65], op=lambda x: x*13, test=lambda x: x%5==0, next_true=1, next_false=6), \
+              #Monkey(id=3, items=[61,70,76,69,82,56], op=lambda x: x+7, test=lambda x: x%3==0, next_true=5, next_false=2), \
+              #Monkey(id=4, items=[79,98], op=lambda x: x+2, test=lambda x: x%7==0, next_true=0, next_false=3), \
+              #Monkey(id=5, items=[72,79,55], op=lambda x: x+1, test=lambda x: x%13==0, next_true=2, next_false=1), \
+              #Monkey(id=6, items=[63], op=lambda x: x+4, test=lambda x: x%19==0, next_true=7, next_false=4), \
+              #Monkey(id=7, items=[72,51,93,63,80,86,81], op=lambda x: x*x, test=lambda x: x%11==0, next_true=0, next_false=4), \
+              ### Test Monkeys
+              #Monkey(id=0, items=[79,98], op=lambda x: x*19, test=lambda x: x%23==0, next_true=2, next_false=3), \
+              #Monkey(id=1, items=[54,65,75,74], op=lambda x: x+6, test=lambda x: x%19==0, next_true=2, next_false=0), \
+              #Monkey(id=2, items=[79,60,97], op=lambda x: x*x, test=lambda x: x%13==0, next_true=1, next_false=3), \
+              #Monkey(id=3, items=[74], op=lambda x: x+3, test=lambda x: x%17==0, next_true=0, next_false=1)
+              ### LCD adjusted op, mod by LCD
               Monkey(id=0, items=[54,61,97,63,74], op=lambda x: x*7, test=lambda x: x%17==0, next_true=5, next_false=3), \
               Monkey(id=1, items=[61,70,97,64,99,83,52,87], op=lambda x: x+8, test=lambda x: x%2==0, next_true=7, next_false=6), \
               Monkey(id=2, items=[60,67,80,65], op=lambda x: x*13, test=lambda x: x%5==0, next_true=1, next_false=6), \
@@ -68,7 +87,7 @@ def main():
         items += len(monkey.items)
     print(f"total items: {items}")
     print()
-    for round in range(0,20):
+    for round in range(0,rounds):
         items = 0
         print(f"round[{round}]")
         for monkey in monkeys:
