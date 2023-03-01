@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+
+import math
+import pdb
+import pprint
+import sys
+
+def print_grid(grid):
+    for row in grid:
+        print(''.join([f"{x:02d}" for x in row]))
+
+def startnode(grid):
+    for row in grid:
+        for height in row:
+            if height == 0:
+                return (grid.index(row),row.index(height))
+
+def print_map(gridmap):
+    print(' '.join([f"{r,c}" for (r,c) in gridmap]))
+    print(f"steps[{len(gridmap)-1}]")
+    
+### Funcional BFS but limited to small data sets
+def bfsmap(grid, node):
+    q = [node]
+    visited = [node]
+    prev = []
+    while q:
+        current = q.pop(0)
+        (row,col) = current
+        height = grid[row][col]
+        ### Up,Down,Left,Right
+        for (nextr,nextc) in ((row,col-1), (row-1,col), (row,col+1), (row+1,col)):
+            if (nextr,nextc) not in visited \
+                    and nextr >= 0 \
+                    and nextr < len(grid) \
+                    and nextc >= 0 \
+                    and nextc < len(grid[nextr]) \
+                    and grid[nextr][nextc] <= height + 1:
+                
+        
+                        
+
+def main():
+    filename = "input.txt"
+    if (len(sys.argv) > 1 and sys.argv[1] == "test"):
+        filename = "test.txt"
+        knots = 1
+    if (len(sys.argv) > 1 and sys.argv[1] == "test2"):
+        filename = "test2.txt"
+    f = open(filename,"r")
+
+    grid = []
+    for line in f.readlines():
+        row = []
+        line = line.rstrip('\n')
+        for token in list(line):
+            height = None
+            if token == 'S':
+                height = 0
+            elif token == 'E':
+                height = 27
+            else:
+                height = ord(token) - 96
+            row.append(height)
+        grid.append(row)
+    print_grid(grid)
+    bfsmap = bfs(grid, startnode)
+    print_map(bfsmap)
+
+if __name__ == "__main__":
+    main()
