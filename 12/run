@@ -25,58 +25,6 @@ class Grid(list):
                 if height == 0:
                     return (self.index(row),row.index(height))
 
-    def baddfsmap(self, node):
-        if node not in self._visited:
-            self._visited.add(node)
-            self._map.insert(0,node)
-            (row,col) = node
-            height = self[row][col]
-            print(f"map{row,col} {height:02d} {self._map}")
-            if height == 27:
-                #yield self._map
-                return self._map
-            ### Include diagonals
-            #for (nextr,nextc) in ((row-1,col-1), (row-1,col), (row-1,col+1), (row,col-1), (row,col+1), (row+1,col-1), (row+1,col), (row+1,col+1)):
-            ### Up,Down,Left,Right
-            for (nextr,nextc) in ((row,col-1), (row-1,col), (row,col+1), (row+1,col)):
-                if (nextr,nextc) not in self._visited \
-                   and nextr >= 0 \
-                   and nextr < len(self) \
-                   and nextc >= 0 \
-                   and nextc < len(self[nextr]) \
-                   and self[nextr][nextc] <= height + 1:
-                    nextnode = self.map((nextr,nextc))
-                    return nextnode
-                    #yield from self.map((nextr,nextc))
-                    #return self.map((nextr,nextc))
-                    
-    ### Who can remember what I was trying here... not me                
-    def unknownmap(self, node):
-        stack = [(node, [node])]
-        while stack:
-            (node,path) = stack.pop(0)
-            (row,col) = node
-            height = self[row][col]
-            print(f"map{row,col} {height:02d} lenm{len(self._map)} lenp{len(path)} {path}")
-            ### Up,Down,Left,Right
-            for (nextr,nextc) in ((row,col-1), (row-1,col), (row,col+1), (row+1,col)):
-                if (nextr,nextc) not in path \
-                   and nextr >= 0 \
-                   and nextr < len(self) \
-                   and nextc >= 0 \
-                   and nextc < len(self[nextr]) \
-                   and self[nextr][nextc] <= height + 1:
-                    #print(f"map{nextr,nextc} {self[nextr][nextc]:02d} {path}")
-                    path = path + [(nextr,nextc)]
-                    if self[nextr][nextc] == 27:
-                        #yield path + [(nextr,nextc)]
-                        print(f"map{nextr,nextc} {height:02d} lenm{len(self._map)} lenp{len(path)}")
-                        if not self._map or len(path) <= len(self._map):
-                            self._map = path
-                    else:
-                        stack.append(((nextr,nextc), path))
-        return self._map
-
     ### Funcional BFS but limited to small data sets
     def map(self, node):
         q = [(node, [node])]
