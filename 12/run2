@@ -7,23 +7,51 @@ import sys
 
 def print_grid(grid):
     for row in grid:
-        print(''.join([f"{x:02d}" for x in row]))
+        print(''.join([f"{x:02d} " for x in row]))
 
-def startnode(grid):
+def find_start_end(grid):
+    start = None
+    end = None
     for row in grid:
         for height in row:
             if height == 0:
-                return (grid.index(row),row.index(height))
+                start = (grid.index(row),row.index(height))
+            if height == 27:
+                end = (grid.index(row),row.index(height))
+    return (start, end)
 
-def print_map(gridmap):
-    print(' '.join([f"{r,c}" for (r,c) in gridmap]))
-    print(f"steps[{len(gridmap)-1}]")
+def find_starts(grid):
+    starts = []
+    for row in grid:
+        for height in row:
+            if height == 1:
+                starts.append((grid.index(row),row.index(height)))
+    return starts
+
+def map_path(path, start, end):
+    mapped = []
+    if (path[end] == None):
+        print("No valid path discovered")
+    else:
+        mapped.insert(0,end)
+        parent = path[end]
+        while (parent != start):
+            mapped.insert(0,parent)
+            parent = path[parent]
+        if (parent == start):
+            mapped.insert(0,start)
+    return mapped
+
+def print_mapped(mapped):
+    print(f"steps[{len(mapped)-1}] ", end='')
+    print(' '.join([f"{r,c}" for (r,c) in mapped]))
     
 ### Funcional BFS but limited to small data sets
-def bfsmap(grid, node):
-    q = [node]
-    visited = [node]
-    prev = []
+def bfsmap(grid, start, end):
+    q = [start]
+    visited = [start]
+    prev = {}
+    prev[end] = None
     while q:
         current = q.pop(0)
         (row,col) = current
@@ -36,9 +64,10 @@ def bfsmap(grid, node):
                     and nextc >= 0 \
                     and nextc < len(grid[nextr]) \
                     and grid[nextr][nextc] <= height + 1:
-                
-        
-                        
+                q.append((nextr,nextc))
+                visited.append((nextr,nextc)) 
+                prev[(nextr,nextc)] = current
+    return prev
 
 def main():
     filename = "input.txt"
@@ -63,9 +92,27 @@ def main():
                 height = ord(token) - 96
             row.append(height)
         grid.append(row)
+    (start, end) = find_start_end(grid)
     print_grid(grid)
-    bfsmap = bfs(grid, startnode)
-    print_map(bfsmap)
+    path = bfsmap(grid, start, end)
+    mapped = map_path(path, start, end)
+    print_mapped(mapped)
+    
+    print("\nFinding shortest starting from an 'a'...")
+    starts = find_starts(grid)
+    shortest = None
+    shortest_start = None
+    for start in starts:
+        print(f"'a' {start} ", end='')
+        path = bfsmap(grid, start, end)
+        if path[end] != None:
+            mapped = map_path(path, start, end)
+            print(f"FOO[{len(mapped) - 1}] ", end='')
+            print_mapped(mapped)
+            if shortest == None or len(mapped) - 1 < shortest:
+                shortest = len(mapped) - 1
+                shortest_start = start
+    print(f"Shortest from any point a: {shortest} starting at {shortest_start}")
 
 if __name__ == "__main__":
     main()
