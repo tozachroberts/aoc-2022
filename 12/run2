@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import math
+from multiprocessing import Pool, TimeoutError
 import pdb
 import pprint
 import sys
@@ -47,7 +48,7 @@ def print_mapped(mapped):
     print(' '.join([f"{r,c}" for (r,c) in mapped]))
     
 ### Funcional BFS but limited to small data sets
-def bfsmap(grid, start, end):
+def bfs(grid, start, end):
     q = [start]
     visited = [start]
     prev = {}
@@ -68,6 +69,13 @@ def bfsmap(grid, start, end):
                 visited.append((nextr,nextc)) 
                 prev[(nextr,nextc)] = current
     return prev
+
+def bfsmappath(grid, start, end):
+    path = bfs(grid, start, end)
+    mapped = None
+    if path[end] != None:
+        mapped = map_path(path, start, end)
+    return (start, path, mapped)
 
 def main():
     filename = "input.txt"
@@ -94,7 +102,7 @@ def main():
         grid.append(row)
     (start, end) = find_start_end(grid)
     print_grid(grid)
-    path = bfsmap(grid, start, end)
+    path = bfs(grid, start, end)
     mapped = map_path(path, start, end)
     print_mapped(mapped)
     
@@ -102,16 +110,20 @@ def main():
     starts = find_starts(grid)
     shortest = None
     shortest_start = None
-    for start in starts:
-        print(f"'a' {start} ", end='')
-        path = bfsmap(grid, start, end)
-        if path[end] != None:
-            mapped = map_path(path, start, end)
-            print(f"FOO[{len(mapped) - 1}] ", end='')
-            print_mapped(mapped)
-            if shortest == None or len(mapped) - 1 < shortest:
-                shortest = len(mapped) - 1
-                shortest_start = start
+    #for start in starts:
+    #    print(f"'a' {start} ", end='')
+    #    path = bfs(grid, start, end)
+    with Pool(processes=4) as pool:
+        results = [pool.apply_async(bfsmappath, (grid, start, end)) for start in starts]
+        for res in results:
+            (start, path, mapped) = res.get(timeout=300)
+            if mapped:
+                print(f"'a' {start} ", end='')
+                print(f"FOO[{len(mapped) - 1}] ", end='')
+                print_mapped(mapped)
+                if shortest == None or len(mapped) - 1 < shortest:
+                    shortest = len(mapped) - 1
+                    shortest_start = start
     print(f"Shortest from any point a: {shortest} starting at {shortest_start}")
 
 if __name__ == "__main__":
