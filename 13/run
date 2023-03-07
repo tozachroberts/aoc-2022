@@ -1,0 +1,87 @@
+#!/usr/bin/env python3
+
+from functools import cmp_to_key
+from multiprocessing import Pool, TimeoutError
+import pdb
+import pprint
+import sys
+
+def print_grid(grid):
+    for row in grid:
+        print(''.join([f"{x:02d} " for x in row]))
+
+def compare(a,b):      
+    #print(f"a={a} b={b}")
+    if (type(a) == int and type(b) == int):
+        if (a < b):
+            return -1
+        elif (a == b):
+            return 0
+        elif (a > b):
+            return 1
+    elif (type(a) == int and type(b) != int):
+        return compare([a],b)
+    elif (type(a) != int and type(b) == int):
+        return compare(a,[b])
+    elif (type(a) == list and type(b) == list):
+        i = 0
+        while(i < len(a)):
+            a_val = None
+            b_val = None
+            try:
+                a_val = a[i]
+            except IndexError:
+                return -1
+            try:
+                b_val = b[i]
+            except IndexError:
+                return 1
+            c = compare(a_val, b_val)
+            if c != 0:
+                return c
+            i += 1
+        if len(b) > len(a):
+            return -1
+    return 0
+
+def main():
+    test = False
+    filename = "input.txt"
+    if (len(sys.argv) > 1 and sys.argv[1] == "test"):
+        filename = "test.txt"
+        test = True
+    if (len(sys.argv) > 1 and sys.argv[1] == "test2"):
+        filename = "test2.txt"
+        test = True
+    f = open(filename,"r")
+
+    pairs = []
+    i = 0
+    sum = 0
+    lines = f.readlines()
+    items = [[[2]],[[6]]]
+    while i < len(lines):
+        a_line = lines[i].rstrip('\n')
+        if not a_line:
+            break
+        b_line = lines[i+1].rstrip('\n')
+        a_list = eval(a_line)
+        items.append(a_list)
+        b_list = eval(b_line)
+        items.append(b_list)
+        c = compare(a_list, b_list)
+        #print(f"cmp[{c}]")
+        pairs.append((a_line, b_line, c))
+        if (c == -1):
+            sum = sum + (i // 3) + 1
+        i += 3
+    if test: pprint.pprint(pairs)
+    print(f"sum[{sum}]")
+    sorted_items = sorted(items, key=cmp_to_key(compare))
+    if test: pprint.pprint(items)
+    if test: pprint.pprint(sorted_items)
+    decoder = (sorted_items.index([[2]])+1) * (sorted_items.index([[6]])+1)
+    print(f"decoder[{decoder}]")
+    
+if __name__ == "__main__":
+    main()
