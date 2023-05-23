@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+
+from multiprocessing import Pool, TimeoutError
+import pdb
+import pprint
+import sys
+
+class Sand():
+    def __init__(self, id, x, y):
+        self._id = id
+        self.x = x
+        self.y = y
+
+    def __repr__(self):
+        return f"{self.x},{self.y}"
+    
+class Cavern(dict):
+    def __init__(self, id=None):
+        self._id = id
+        self.start = {(500,0)}
+        self.rock = set()
+        self.sand = set()
+        super().__init__(self)
+
+    def __repr__(self):
+        return f"Grid{str(self._id)}"
+
+    #def pprint(self):
+
+def vectrace(a,b):
+    points = set()
+    (xa,ya) = a
+    (xb,yb) = b
+    if (xa == xb):
+        y = min(ya,yb)
+        while y != yb:
+            points.add((xa,y))
+            y = y+1
+    elif (ya == yb):
+        x = min(xa,xb)
+        while x != xb:
+            points.add((x,ya))
+            x = x+1
+    return points
+
+def main():
+    test = False
+    filename = "input.txt"
+    if (len(sys.argv) > 1 and sys.argv[1] == "test"):
+        filename = "test.txt"
+        test = True
+    if (len(sys.argv) > 1 and sys.argv[1] == "test2"):
+        filename = "test2.txt"
+        test = True
+    f = open(filename,"r")
+
+    lines = f.readlines()
+    cavern = Cavern(0)
+    for line in lines:
+        line = line.rstrip('\n')
+        coordinates = " -> ".split(line)
+        for i in range(0,len(coordinates)-1):
+            a = eval(coordinates[i])
+            b = eval(coordinates[i+1])
+            cavern.rock.update(vectrace(a,b))
+            
+    
+if __name__ == "__main__":
+    main()
