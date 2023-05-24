@@ -28,19 +28,22 @@ class Sand():
     
     def move(self, cavern):
         atrest = False
-        flowing = False
-        while not (atrest or flowing):
-            if self.y >= max(y for (x,y) in cavern.rock):
-                flowing = True
-            elif self.down() not in cavern.all():
+        blocked = False
+        while not (atrest or blocked):
+            #if self.y >= max(y for (x,y) in cavern.rock):
+            if self.y == cavern.floor()-1:
+                atrest = True
+            elif self.down() not in cavern.all() and self.down()[1] != cavern.floor():
                 self.y = self.down()[1]
-            elif self.downleft() not in cavern.all():
+            elif self.downleft() not in cavern.all() and self.downleft()[1] != cavern.floor():
                 (self.x,self.y) = self.downleft()
-            elif self.downright() not in cavern.all():
+            elif self.downright() not in cavern.all() and self.downright()[1] != cavern.floor():
                 (self.x,self.y) = self.downright()
             else:
                 atrest = True
-        return (atrest, flowing)
+                if cavern.start == self.point():
+                    blocked = True
+        return (atrest, blocked)
         
 class Cavern(dict):
     def __init__(self, id=None):
@@ -56,19 +59,26 @@ class Cavern(dict):
     def all(self):
         return self.rock.union(self.sand)
 
+    def addrock(self, a, b):
+        self.rock.update(vectrace(a,b))
+        
+    def floor(self):
+        ymax = max(y for (x,y) in self.rock)+2
+        return ymax
+        
     def pprint(self):
         xmin = min(x for (x,y) in self.all())
         xmax = max(x for (x,y) in self.all())
         ymin = 0
         ymax = max(y for (x,y) in self.all())
         grid = ""
-        for y in range(ymin, ymax+1):
+        for y in range(ymin, self.floor()+1):
             row = ""
             for x in range(xmin, xmax+1):
                 point = (x,y)
                 if point == self.start:
                     row += '+'
-                elif point in self.rock:
+                elif point in self.rock or y == self.floor():
                     row += '#'
                 elif point in self.sand:
                     row += 'o'
@@ -107,20 +117,20 @@ def main():
         for i in range(0,len(coordinates)-1):
             a = eval(coordinates[i])
             b = eval(coordinates[i+1])
-            cavern.rock.update(vectrace(a,b))
+            cavern.addrock(a,b)
     print("Cavern")
     print(cavern.pprint())        
-    flowing = False
+    blocked = False
     i = 0
-    while not flowing:
+    while not blocked:
         sand = Sand(i,cavern.start[0],cavern.start[1])
-        (atrest, flowing) = sand.move(cavern)
-        print(f"{sand} atrest[{atrest}] flowing[{flowing}]")
+        (atrest, blocked) = sand.move(cavern)
+        print(f"{sand} atrest[{atrest}] blocked[{blocked}]")
         if atrest:
             cavern.sand.add(sand.point())
             i += 1
             print(sand)
-            print(cavern.pprint())
+            #print(cavern.pprint())
 
 if __name__ == "__main__":
     main()
