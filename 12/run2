@@ -113,7 +113,7 @@ def main():
     #for start in starts:
     #    print(f"'a' {start} ", end='')
     #    path = bfs(grid, start, end)
-    with Pool(processes=4) as pool:
+    with Pool(processes=16) as pool:
         results = [pool.apply_async(bfsmappath, (grid, start, end)) for start in starts]
         for res in results:
             (start, path, mapped) = res.get(timeout=300)
